@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Browse Listings – HerCraft Hub</title>
+  <title>Sell an Item – HerCraft Hub</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -12,30 +12,34 @@
 
 <?php include 'includes/navbar.php'; ?>
 
-<!-- ── Page Header ── -->
 <section style="background:linear-gradient(135deg,#6B2D8B,#E91E8C);padding:40px 0;color:white;">
   <div class="container">
-    <h1 style="font-weight:700;">Browse Listings ✦</h1>
-    <p style="opacity:0.9;">Discover handmade goods, tech crafts &amp; digital products</p>
+    <h1 style="font-weight:700;">Sell Your Item ✦</h1>
+    <p style="opacity:0.9;">List your handmade good, tech craft or digital product in minutes</p>
   </div>
 </section>
 
-<div class="container my-5">
-  <div class="row g-4">
+<div class="container my-5" style="max-width:700px;">
+  <div class="card p-4 p-md-5">
 
-    <!-- ── Sidebar Filters ── -->
-    <div class="col-lg-3">
-      <div class="card p-4">
-        <h6 class="fw-bold mb-3" style="color:var(--purple);">🔍 Filter &amp; Search</h6>
+    <?php if(isset($_SESSION['error'])): ?>
+      <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+    <?php endif; ?>
 
-        <!-- Search box -->
-        <input type="text" id="searchInput" class="form-control mb-3" 
-               placeholder="Search listings...">
+    <form action="php/sell_action.php" method="POST" enctype="multipart/form-data" id="sellForm">
 
-        <!-- Category filter -->
-        <label class="form-label fw-500">Category</label>
-        <select id="categoryFilter" class="form-select mb-3">
-          <option value="">All Categories</option>
+      <div class="mb-3">
+        <label class="form-label">Item Title</label>
+        <input type="text" name="title" class="form-control"
+               placeholder="e.g. Handmade Beaded Phone Case" 
+               maxlength="100" required>
+        <small class="text-muted"><span id="titleCount">0</span>/100 characters</small>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        <select name="category" class="form-select" required>
+          <option value="">-- Choose a category --</option>
           <option value="Tech Crafts">💻 Tech Crafts</option>
           <option value="Handmade">🧵 Handmade</option>
           <option value="Digital Art">🎨 Digital Art</option>
@@ -43,82 +47,61 @@
           <option value="Bundles">📦 Bundles</option>
           <option value="Beauty Tech">✨ Beauty Tech</option>
         </select>
-
-        <!-- Price range -->
-        <label class="form-label fw-500">Max Price: <span id="priceLabel">R500</span></label>
-        <input type="range" id="priceRange" class="form-range mb-3"
-               min="0" max="2000" value="500" step="50">
-
-        <!-- Sort -->
-        <label class="form-label fw-500">Sort By</label>
-        <select id="sortFilter" class="form-select mb-3">
-          <option value="newest">Newest First</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-        </select>
-
-        <button class="btn btn-primary w-100" id="applyFilters">Apply Filters</button>
-        <button class="btn btn-outline-primary w-100 mt-2" id="clearFilters">Clear</button>
-      </div>
-    </div>
-
-    <!-- ── Listings Grid ── -->
-    <div class="col-lg-9">
-
-      <!-- Results count -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted small" id="resultsCount">Showing all listings</span>
       </div>
 
-      <div class="row g-4" id="listingsGrid">
-        <?php
-          // Placeholder listings — replaced with real DB data in Phase 3
-          $items = [
-            [1,"Custom LED Phone Case","Tech Crafts",  180,"purple"],
-            [2,"Crochet Laptop Sleeve","Handmade",     250,"pink"],
-            [3,"Digital Planner PDF",  "Digital Art",   80,"teal"],
-            [4,"Beaded Earrings Set",  "Accessories",  120,"coral"],
-            [5,"Self-Care Tech Bundle","Bundles",      350,"amber"],
-            [6,"Glow Skin Device",     "Beauty Tech",  420,"green"],
-            [7,"PCB Art Wall Print",   "Digital Art",  150,"blue"],
-            [8,"Knitted Cable Cover",  "Handmade",      95,"pink"],
-          ];
-          foreach($items as $item):
-        ?>
-        <div class="col-sm-6 col-xl-4 listing-item"
-             data-category="<?= $item[2] ?>"
-             data-price="<?= $item[3] ?>"
-             data-name="<?= strtolower($item[1]) ?>">
-          <div class="card h-100">
-            <img src="https://via.placeholder.com/400x200/9B59B6/white?text=<?= urlencode($item[1]) ?>"
-                 class="card-img-top" alt="<?= $item[1] ?>">
-            <div class="card-body">
-              <span class="badge-category"><?= $item[2] ?></span>
-              <h6 class="mt-2 fw-bold"><?= $item[1] ?></h6>
-              <p class="text-muted small">Sold by a verified seller 🇿🇦</p>
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <span style="color:var(--purple);font-weight:700;">
-                  R<?= number_format($item[3],2) ?>
-                </span>
-                <a href="listing.php?id=<?= $item[0] ?>" class="btn btn-primary btn-sm">
-                  View Item
-                </a>
-              </div>
-            </div>
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="4"
+                  placeholder="Describe your item — materials, size, what makes it special..."
+                  maxlength="500" required></textarea>
+        <small class="text-muted"><span id="descCount">0</span>/500 characters</small>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label">Price (ZAR)</label>
+          <div class="input-group">
+            <span class="input-group-text">R</span>
+            <input type="number" name="price" class="form-control"
+                   placeholder="0.00" min="1" step="0.01" required>
           </div>
         </div>
-        <?php endforeach; ?>
+        <div class="col-sm-6">
+          <label class="form-label">Condition</label>
+          <select name="condition" class="form-select" required>
+            <option value="">-- Select --</option>
+            <option value="New">New</option>
+            <option value="Like New">Like New</option>
+            <option value="Good">Good</option>
+            <option value="Fair">Fair</option>
+          </select>
+        </div>
       </div>
 
-      <!-- No results message -->
-      <div id="noResults" class="text-center py-5 d-none">
-        <p style="font-size:3rem;">🔍</p>
-        <h5 style="color:var(--purple);">No listings found</h5>
-        <p class="text-muted">Try adjusting your filters</p>
-        <button class="btn btn-outline-primary" id="clearFilters2">Clear Filters</button>
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control"
+               placeholder="e.g. Johannesburg, Gauteng">
       </div>
 
-    </div>
+      <div class="mb-4">
+        <label class="form-label">Product Image</label>
+        <input type="file" name="image" id="imageInput" class="form-control"
+               accept="image/*">
+        <small class="text-muted">JPG, PNG or GIF — max 2MB</small>
+
+        <!-- Image preview -->
+        <div id="imagePreview" class="mt-3 d-none">
+          <img id="previewImg" src="" alt="Preview"
+               style="max-width:100%;border-radius:12px;max-height:250px;object-fit:cover;">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2">
+        ✦ Post My Listing
+      </button>
+
+    </form>
   </div>
 </div>
 
@@ -126,6 +109,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/main.js"></script>
-<script src="js/browse.js"></script>
+<script src="js/sell.js"></script>
 </body>
 </html>
