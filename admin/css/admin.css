@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --purple:      #6B2D8B;
+  --pink:        #E91E8C;
+  --pink-light:  #F8BBD9;
+  --bg:          #F8F4FF;
+  --white:       #FFFFFF;
+  --text-dark:   #2C1654;
+  --text-grey:   #6B7280;
+  --border:      #E9D5FF;
+  --shadow:      0 4px 20px rgba(107,45,139,0.10);
+  --sidebar-w:   240px;
+  --nav-h:       64px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text-dark); }
+
+/* ── Top Navbar ── */
+.admin-nav {
+  position: fixed; top:0; left:0; right:0;
+  height: var(--nav-h);
+  background: var(--white);
+  border-bottom: 3px solid var(--pink-light);
+  display: flex; align-items:center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+.admin-brand { font-weight:700; font-size:1.2rem;
+               color:var(--purple); text-decoration:none; }
+.admin-brand span { color:var(--pink); }
+
+/* ── Layout ── */
+.admin-wrapper { display:flex; margin-top:var(--nav-h); min-height:calc(100vh - var(--nav-h)); }
+
+/* ── Sidebar ── */
+.admin-sidebar {
+  width: var(--sidebar-w);
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  padding: 24px 0;
+  position: fixed;
+  top: var(--nav-h);
+  bottom: 0;
+  overflow-y: auto;
+}
+.sidebar-menu { list-style:none; }
+.sidebar-menu a {
+  display: block;
+  padding: 12px 24px;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+}
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+  background: var(--bg);
+  color: var(--purple);
+  border-left-color: var(--purple);
+}
+
+/* ── Main Content ── */
+.admin-main {
+  margin-left: var(--sidebar-w);
+  padding: 32px;
+  flex: 1;
+}
+.admin-header {
+  display: flex; justify-content:space-between;
+  align-items:center; margin-bottom:28px;
+}
+.admin-header h4 { color:var(--purple); font-weight:700; }
+
+/* ── Stat Cards ── */
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex; align-items:center; gap:16px;
+  box-shadow: var(--shadow);
+}
+.stat-icon { font-size:2rem; }
+.stat-number { font-size:1.8rem; font-weight:700; color:var(--purple); }
+.stat-label  { font-size:0.8rem; color:var(--text-grey); font-weight:500; }
+
+/* ── Admin Card ── */
+.admin-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+}
+
+/* ── Tables ── */
+.table thead th {
+  background: var(--bg);
+  color: var(--purple);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-bottom: 2px solid var(--border);
+}
+.table td { font-size:0.88rem; vertical-align:middle; }
+
+/* ── Role Badges ── */
+.role-badge {
+  padding: 3px 12px; border-radius:20px;
+  font-size:0.75rem; font-weight:600;
+}
+.role-admin  { background:#EDE7F6; color:#4A148C; }
+.role-seller { background:#FCE4EC; color:#880E4F; }
+.role-buyer  { background:#E8F5E9; color:#1B5E20; }
+
+/* ── Status Badges ── */
+.status-badge {
+  padding: 3px 12px; border-radius:20px;
+  font-size:0.75rem; font-weight:600;
+}
+.status-badge.active   { background:#E8F5E9; color:#2E7D32; }
+.status-badge.inactive { background:#FFEBEE; color:#C62828; }
+
+/* ── Forms ── */
+.form-control:focus, .form-select:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(107,45,139,0.15);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  border:none; border-radius:25px; font-weight:600;
+}
+.btn-primary:hover { opacity:0.88; background:linear-gradient(135deg,var(--purple),var(--pink)); }
+.btn-outline-primary { border:2px solid var(--purple); color:var(--purple); border-radius:25px; }
+.btn-outline-primary:hover { background:var(--purple); color:white; }
