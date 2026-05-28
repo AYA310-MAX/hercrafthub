@@ -28,7 +28,15 @@ $stmt->fetch();
 $stmt->close();
 
 // ── Check password ──
-if (!$id || !password_verify($password, $hashed)) {
+if (!$id ) {
+  $_SESSION['error'] = "Incorrect email or password. Please try again.";
+  header('Location: ../login.php');
+  exit;
+}
+
+$hashed = (string)$hashed;
+
+if (!password_verify($password, $hashed)) {
   $_SESSION['error'] = "Incorrect email or password. Please try again.";
   header('Location: ../login.php');
   exit;

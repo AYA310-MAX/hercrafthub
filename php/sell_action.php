@@ -76,7 +76,7 @@ $stmt = $conn->prepare(
    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 );
 $stmt->bind_param(
-  "iissdss s",
+  "iissdsss",
   $seller_id, $category_id, $title, $description,
   $price, $image_name, $condition, $location
 );
