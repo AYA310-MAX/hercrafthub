@@ -19,7 +19,7 @@
       <div class="col-md-4 mb-4">
         <h6 style="color:white;">Contact</h6>
         <p style="font-size:0.9rem;" class="mt-2">hello@hercrafthub.co.za<br>
-        Built with 💜 in South Africa</p>
+        Built with in South Africa</p>
       </div>
     </div>
     <hr style="border-color:#444;">

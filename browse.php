@@ -7,10 +7,21 @@
   <title>Browse Listings – HerCraft Hub</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 </head>
 <body>
 
 <?php include 'includes/navbar.php'; ?>
+
+
+<div class="container mt-4">
+  <a href="javascript:history.back()" class="back-btn">
+    <i class="ti ti-arrow-left"></i> Back
+  </a>
+</div>
+
+<!-- ── Page Header ── -->
+<section class="page-header">
 
 <!-- ── Page Header ── -->
 <section style="background:linear-gradient(135deg,#6B2D8B,#E91E8C);padding:40px 0;color:white;">
