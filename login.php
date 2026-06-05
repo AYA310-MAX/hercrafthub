@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,7 @@
 
 <div class="auth-card">
   <div class="text-center mb-4">
-    <h2>Welcome Back ✦</h2>
+   <h2>Welcome Back</h2>
     <p class="text-muted">Log in to your HerCraft Hub account</p>
   </div>
 
@@ -46,7 +46,9 @@
       <div class="input-group">
         <input type="password" name="password" id="password" 
                class="form-control" placeholder="Your password" required>
-        <button class="btn btn-outline-secondary" type="button" id="togglePass">👁</button>
+        <button class="btn btn-outline-secondary" type="button" id="togglePass">
+  <i class="ti ti-eye"></i>
+</button>
       </div>
     </div>
 

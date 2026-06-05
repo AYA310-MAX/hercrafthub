@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  
 </head>
 <body>
 
@@ -22,7 +22,7 @@
 
 <div class="auth-card">
   <div class="text-center mb-4">
-    <h2>Join HerCraft Hub ✦</h2>
+    <h2>Join HerCraft Hub</h2>
     <p class="text-muted">Create your free account and start selling today</p>
   </div>
 
@@ -53,8 +53,9 @@
       <div class="input-group">
         <input type="password" name="password" id="password" 
                class="form-control" placeholder="Min 6 characters" required>
-        <button class="btn btn-outline-secondary" type="button" id="togglePass">👁</button>
-      </div>
+        <button class="btn btn-outline-secondary" type="button" id="togglePass">
+  <i class="ti ti-eye"></i>
+</button>
       <div class="mt-1">
         <div id="strength-bar" style="height:4px;border-radius:4px;width:0%;transition:width 0.3s,background 0.3s;"></div>
         <small id="strength-text" class="text-muted"></small>

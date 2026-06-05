@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,8 +13,6 @@
 
 <?php include 'includes/navbar.php'; ?>
 
-
-
 <div class="container mt-4">
   <a href="javascript:history.back()" class="back-btn">
     <i class="ti ti-arrow-left"></i> Back
@@ -22,11 +20,9 @@
 </div>
 
 <section class="page-header">
-
-<section style="background:linear-gradient(135deg,#6B2D8B,#E91E8C);padding:40px 0;color:white;">
   <div class="container">
-    <h1 style="font-weight:700;">Sell Your Item ✦</h1>
-    <p style="opacity:0.9;">List your handmade good, tech craft or digital product in minutes</p>
+    <h1>Sell Your Item</h1>
+    <p>List your handmade good, tech craft or digital product in minutes</p>
   </div>
 </section>
 
@@ -42,21 +38,21 @@
       <div class="mb-3">
         <label class="form-label">Item Title</label>
         <input type="text" name="title" class="form-control"
-               placeholder="e.g. Handmade Beaded Phone Case" 
+               placeholder="e.g. Handmade Beaded Phone Case"
                maxlength="100" required>
-        <small class="text-muted"><span id="titleCount">0</span>/100 characters</small>
+        <small style="color:var(--text-muted);"><span id="titleCount">0</span>/100 characters</small>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Category</label>
         <select name="category" class="form-select" required>
           <option value="">-- Choose a category --</option>
-          <option value="Tech Crafts">💻 Tech Crafts</option>
-          <option value="Handmade">🧵 Handmade</option>
-          <option value="Digital Art">🎨 Digital Art</option>
-          <option value="Accessories">📱 Accessories</option>
-          <option value="Bundles">📦 Bundles</option>
-          <option value="Beauty Tech">✨ Beauty Tech</option>
+          <option value="Tech Crafts">Tech Crafts</option>
+          <option value="Handmade">Handmade</option>
+          <option value="Digital Art">Digital Art</option>
+          <option value="Accessories">Accessories</option>
+          <option value="Bundles">Bundles</option>
+          <option value="Beauty Tech">Beauty Tech</option>
         </select>
       </div>
 
@@ -65,14 +61,17 @@
         <textarea name="description" class="form-control" rows="4"
                   placeholder="Describe your item — materials, size, what makes it special..."
                   maxlength="500" required></textarea>
-        <small class="text-muted"><span id="descCount">0</span>/500 characters</small>
+        <small style="color:var(--text-muted);"><span id="descCount">0</span>/500 characters</small>
       </div>
 
       <div class="row g-3 mb-3">
         <div class="col-sm-6">
           <label class="form-label">Price (ZAR)</label>
           <div class="input-group">
-            <span class="input-group-text">R</span>
+            <span class="input-group-text"
+                  style="background:var(--cream-dark);border-color:var(--border);color:var(--text-dark);">
+              R
+            </span>
             <input type="number" name="price" class="form-control"
                    placeholder="0.00" min="1" step="0.01" required>
           </div>
@@ -97,25 +96,21 @@
 
       <div class="mb-4">
         <label class="form-label">Product Image</label>
-        <input type="file" name="image" id="imageInput" class="form-control"
-               accept="image/*">
-        <small class="text-muted">JPG, PNG or GIF — max 2MB</small>
-
-        <!-- Image preview -->
+        <input type="file" name="image" id="imageInput" class="form-control" accept="image/*">
+        <small style="color:var(--text-muted);">JPG, PNG or GIF — max 2MB</small>
         <div id="imagePreview" class="mt-3 d-none">
           <img id="previewImg" src="" alt="Preview"
-               style="max-width:100%;border-radius:12px;max-height:250px;object-fit:cover;">
+               style="max-width:100%;border-radius:var(--radius);max-height:250px;object-fit:cover;">
         </div>
       </div>
 
       <button type="submit" class="btn btn-primary w-100 py-2">
-        ✦ Post My Listing
+        Post My Listing
       </button>
 
     </form>
   </div>
 </div>
-
 <?php include 'includes/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

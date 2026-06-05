@@ -1,6 +1,6 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -73,34 +73,38 @@
         </div>
       </div>
 
-      <!-- Seller info -->
-      <div class="card p-3 mb-4" style="border-left:4px solid var(--purple);">
-        <div class="d-flex align-items-center gap-3">
-          <div style="width:48px;height:48px;border-radius:50%;
-                      background:linear-gradient(135deg,var(--purple),var(--pink));
-                      display:flex;align-items:center;justify-content:center;
-                      color:white;font-weight:700;font-size:1.2rem;">
-            <?= strtoupper(substr($product['seller'],0,1)) ?>
-          </div>
-          <div>
-            <strong><?= $product['seller'] ?></strong>
-            <br><small class="text-muted">Verified Seller since <?= $product['seller_since'] ?> ✓</small>
-          </div>
-        </div>
-      </div>
+     <!-- Seller info -->
+<div class="card p-3 mb-4" style="border-left:4px solid var(--purple);">
+  <div class="d-flex align-items-center gap-3">
+    <div class="user-avatar" style="width:48px;height:48px;font-size:1.2rem;">
+      <?= strtoupper(substr($product['seller'],0,1)) ?>
+    </div>
+    <div>
+      <strong><?= $product['seller'] ?></strong>
+      <br><small style="color:var(--text-muted);">
+        Verified Seller since <?= $product['seller_since'] ?>
+      </small>
+    </div>
+  </div>
+</div>
 
-      <!-- Action buttons -->
-      <div class="d-grid gap-2">
-        <?php if(isset($_SESSION['user_id'])): ?>
-          <button class="btn btn-primary py-2">💬 Message Seller</button>
-          <button class="btn btn-outline-primary py-2" id="wishlistBtn">♡ Save to Wishlist</button>
-        <?php else: ?>
-          <a href="login.php" class="btn btn-primary py-2">Login to Contact Seller</a>
-          <a href="register.php" class="btn btn-outline-primary py-2">Join Free to Buy</a>
-        <?php endif; ?>
-        <a href="browse.php" class="btn btn-outline-secondary py-2">← Back to Browse</a>
-      </div>
-
+<!-- Action buttons -->
+<div class="d-grid gap-2">
+  <?php if(isset($_SESSION['user_id'])): ?>
+    <button class="btn btn-primary py-2">
+      <i class="ti ti-message me-2"></i>Message Seller
+    </button>
+    <button class="btn btn-outline-primary py-2" id="wishlistBtn">
+      <i class="ti ti-heart me-2"></i>Save to Wishlist
+    </button>
+  <?php else: ?>
+    <a href="login.php" class="btn btn-primary py-2">Login to Contact Seller</a>
+    <a href="register.php" class="btn btn-outline-primary py-2">Join Free to Buy</a>
+  <?php endif; ?>
+  <a href="browse.php" class="btn btn-outline-secondary py-2">
+    <i class="ti ti-arrow-left me-2"></i>Back to Browse
+  </a>
+</div>
     </div>
   </div>
 </div>
