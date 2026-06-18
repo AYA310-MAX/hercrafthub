@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="">
 <head>
+  <link rel="icon" type="image/jpeg" href="images/logo.jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login – HerCraft Hub</title>
@@ -44,11 +45,11 @@
     <div class="mb-4">
       <label class="form-label">Password</label>
       <div class="input-group">
-        <input type="password" name="password" id="password" 
+        <input type="password" name="password" id="password"
                class="form-control" placeholder="Your password" required>
-        <button class="btn btn-outline-secondary" type="button" id="togglePass">
-  <i class="ti ti-eye"></i>
-</button>
+        <button class="btn btn-toggle-pass" type="button" id="togglePass" aria-label="Toggle password visibility">
+          <i class="ti ti-eye"></i>
+        </button>
       </div>
     </div>
 

@@ -18,6 +18,11 @@
       </a>
     </li>
     <li>
+      <a href="sales.php" class="<?= $page=='sales.php'?'active':'' ?>">
+        💰 Sales Tracking
+      </a>
+    </li>
+    <li>
       <a href="../index.php" target="_blank">
         🌐 View Live Site
       </a>

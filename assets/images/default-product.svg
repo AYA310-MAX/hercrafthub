@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 400 200">
+  <rect width="400" height="200" fill="#2D1C42"/>
+  <rect x="140" y="50" width="120" height="80" rx="8" fill="#4A3060" stroke="#6B4E8A" stroke-width="2"/>
+  <circle cx="200" cy="85" r="18" fill="#8B6BA8"/>
+  <rect x="160" y="110" width="80" height="6" rx="3" fill="#C4849E"/>
+  <text x="200" y="165" text-anchor="middle" fill="#F5F0E8" font-family="Georgia, serif" font-size="14">HerCraft Hub</text>
+</svg>

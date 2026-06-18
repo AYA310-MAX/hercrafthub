@@ -1,6 +1,3 @@
-// ── HerCraft Hub — Main JavaScript ──
-
-// ── Dark mode ──
 const toggle = document.getElementById('themeToggle');
 const html   = document.documentElement;
 
@@ -18,48 +15,52 @@ toggle?.addEventListener('click', () => {
   applyTheme(next);
 });
 
-// ── Password toggle ──
-document.getElementById('togglePass')?.addEventListener('click', function() {
-  const pwd = document.getElementById('password');
-  pwd.type  = pwd.type === 'password' ? 'text' : 'password';
-  const icon = this.querySelector('i');
-  if (icon) icon.className = pwd.type === 'password' ? 'ti ti-eye' : 'ti ti-eye-off';
+document.querySelectorAll('.btn-toggle-pass').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const group = this.closest('.input-group');
+    const pwd   = group?.querySelector('input[type="password"], input[type="text"]');
+    if (!pwd) return;
+    pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    const icon = this.querySelector('i');
+    if (icon) icon.className = pwd.type === 'password' ? 'ti ti-eye' : 'ti ti-eye-off';
+  });
 });
 
-// ── Password strength indicator ──
 document.getElementById('password')?.addEventListener('input', function() {
-  const bar  = document.getElementById('strength-bar');
-  const text = document.getElementById('strength-text');
+  const bar = document.getElementById('strength-bar');
   if (!bar) return;
 
   let s = 0;
-  if (this.value.length >= 6)           s++;
-  if (/[A-Z]/.test(this.value))         s++;
-  if (/[0-9]/.test(this.value))         s++;
-  if (/[^A-Za-z0-9]/.test(this.value))  s++;
+  if (this.value.length >= 6)          s++;
+  if (/[A-Z]/.test(this.value))        s++;
+  if (/[0-9]/.test(this.value))        s++;
+  if (/[^A-Za-z0-9]/.test(this.value)) s++;
 
   const levels = [
-    { w:'25%',  bg:'#8B2A2A', label:'Weak'   },
-    { w:'50%',  bg:'#7A4A1A', label:'Fair'   },
-    { w:'75%',  bg:'#4A6A2A', label:'Good'   },
-    { w:'100%', bg:'#2E5A28', label:'Strong' },
+    { w: '25%',  bg: '#8B2A2A' },
+    { w: '50%',  bg: '#7A4A1A' },
+    { w: '75%',  bg: '#4A6A2A' },
+    { w: '100%', bg: '#2E5A28' }
   ];
-  const lvl = levels[s - 1] || { w:'0%', bg:'transparent', label:'' };
+  const lvl = levels[s - 1] || { w: '0%', bg: 'transparent' };
   bar.style.width      = lvl.w;
   bar.style.background = lvl.bg;
-  text.textContent     = lvl.label;
 });
 
-// ── Password match checker ──
 document.getElementById('confirm_password')?.addEventListener('input', function() {
-  const pwd = document.getElementById('password').value;
+  const pwd = document.getElementById('password')?.value || '';
   const msg = document.getElementById('match-msg');
   if (!msg) return;
-  msg.textContent = this.value === pwd ? 'Passwords match' : 'Passwords do not match';
-  msg.style.color = this.value === pwd ? '#2E5A28' : '#8B2A2A';
+  if (this.value.length === 0) {
+    msg.textContent = '';
+    msg.className = 'text-muted';
+    return;
+  }
+  const matches = this.value === pwd;
+  msg.textContent = matches ? 'Passwords match' : 'Passwords do not match';
+  msg.className = matches ? 'match-valid' : 'match-invalid';
 });
 
-// ── Flash message auto dismiss ──
 setTimeout(() => {
   document.querySelectorAll('.alert').forEach(a => {
     a.style.transition = 'opacity 0.5s';
@@ -68,11 +69,10 @@ setTimeout(() => {
   });
 }, 3500);
 
-// ── Scroll to top button ──
 const scrollBtn = document.createElement('button');
-scrollBtn.innerHTML         = '<i class="ti ti-arrow-up"></i>';
+scrollBtn.innerHTML = '<i class="ti ti-arrow-up"></i>';
 scrollBtn.setAttribute('aria-label', 'Back to top');
-scrollBtn.style.cssText     = `
+scrollBtn.style.cssText = `
   position: fixed; bottom: 28px; right: 28px;
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--purple); color: var(--cream);
@@ -84,13 +84,7 @@ scrollBtn.style.cssText     = `
 document.body.appendChild(scrollBtn);
 
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 300) {
-    scrollBtn.style.display        = 'flex';
-    scrollBtn.style.alignItems     = 'center';
-    scrollBtn.style.justifyContent = 'center';
-  } else {
-    scrollBtn.style.display = 'none';
-  }
+  scrollBtn.style.display = window.scrollY > 300 ? 'flex' : 'none';
 });
 
 scrollBtn.addEventListener('click', () => {
@@ -101,34 +95,61 @@ scrollBtn.addEventListener('mouseenter', () => {
   scrollBtn.style.background = 'var(--purple-mid)';
   scrollBtn.style.transform  = 'translateY(-3px)';
 });
+
 scrollBtn.addEventListener('mouseleave', () => {
   scrollBtn.style.background = 'var(--purple)';
   scrollBtn.style.transform  = 'translateY(0)';
 });
 
-// ── Active nav link highlight ──
 const currentPage = window.location.pathname.split('/').pop();
 document.querySelectorAll('.nav-link').forEach(link => {
   if (link.getAttribute('href') === currentPage) {
-    link.style.color      = 'var(--purple)';
-    link.style.fontWeight = '600';
+    link.classList.add('active');
   }
 });
 
-// ── Card tilt effect on hover ──
-document.querySelectorAll('.card').forEach(card => {
-  card.addEventListener('mousemove', function(e) {
-    const rect   = this.getBoundingClientRect();
-    const x      = e.clientX - rect.left;
-    const y      = e.clientY - rect.top;
-    const centerX = rect.width  / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * 4;
-    const rotateY = ((x - centerX) / centerX) * 4;
-    this.style.transform =
-      `translateY(-6px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg)`;
+document.querySelectorAll('.logout-trigger').forEach(link => {
+  link.addEventListener('click', (e) => {
+    if (link.getAttribute('href') === '#') {
+      e.preventDefault();
+    }
   });
-  card.addEventListener('mouseleave', function() {
-    this.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
-  });
+});
+
+document.getElementById('wishlistBtn')?.addEventListener('click', async function() {
+  const productId = this.dataset.productId;
+  if (!productId) return;
+
+  const saved = this.classList.contains('saved');
+  const action  = saved ? 'remove' : 'add';
+  const formData = new FormData();
+  formData.append('product_id', productId);
+  formData.append('action', action);
+
+  try {
+    const response = await fetch('php/wishlist_action.php', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      window.location.href = 'login.php';
+      return;
+    }
+
+    const icon  = this.querySelector('i');
+    const label = this.querySelector('.wishlist-label');
+
+    if (saved) {
+      this.classList.remove('saved');
+      if (icon) icon.className = 'ti ti-heart me-2';
+      if (label) label.textContent = 'Save to Wishlist';
+    } else {
+      this.classList.add('saved');
+      if (icon) icon.className = 'ti ti-heart-filled me-2';
+      if (label) label.textContent = 'Saved to Wishlist';
+    }
+  } catch (error) {
+    window.location.href = 'listing.php?id=' + productId;
+  }
 });

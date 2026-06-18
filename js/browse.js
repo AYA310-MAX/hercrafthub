@@ -1,5 +1,3 @@
-// HerCraft Hub – Browse page filters
-
 function filterListings() {
   const search   = document.getElementById('searchInput').value.toLowerCase();
   const category = document.getElementById('categoryFilter').value;
@@ -26,7 +24,6 @@ function filterListings() {
     }
   });
 
-  // Sort visible items
   const grid = document.getElementById('listingsGrid');
   const visibleItems = items.filter(i => i.style.display !== 'none');
 
@@ -37,34 +34,38 @@ function filterListings() {
   });
   visibleItems.forEach(item => grid.appendChild(item));
 
-  // Results count
   document.getElementById('resultsCount').textContent =
     visible === 0 ? 'No results' : `Showing ${visible} listing${visible !== 1 ? 's' : ''}`;
 
-  // No results message
   document.getElementById('noResults').classList.toggle('d-none', visible > 0);
 }
 
-// Price range live label
 document.getElementById('priceRange')?.addEventListener('input', function() {
   document.getElementById('priceLabel').textContent = 'R' + this.value;
   filterListings();
 });
 
-// Live search as you type
 document.getElementById('searchInput')?.addEventListener('input', filterListings);
 document.getElementById('categoryFilter')?.addEventListener('change', filterListings);
 document.getElementById('sortFilter')?.addEventListener('change', filterListings);
 document.getElementById('applyFilters')?.addEventListener('click', filterListings);
 
-// Clear buttons
 function clearAll() {
-  document.getElementById('searchInput').value    = '';
+  const maxPrice = window.HCH_MAX_PRICE || 2000;
+  document.getElementById('searchInput').value = '';
   document.getElementById('categoryFilter').value = '';
-  document.getElementById('priceRange').value     = '2000';
-  document.getElementById('priceLabel').textContent = 'R2000';
-  document.getElementById('sortFilter').value     = 'newest';
+  document.getElementById('priceRange').value = String(maxPrice);
+  document.getElementById('priceLabel').textContent = 'R' + maxPrice;
+  document.getElementById('sortFilter').value = 'newest';
   filterListings();
 }
-document.getElementById('clearFilters')?.addEventListener('click',  clearAll);
+
+document.getElementById('clearFilters')?.addEventListener('click', clearAll);
 document.getElementById('clearFilters2')?.addEventListener('click', clearAll);
+
+const urlParams = new URLSearchParams(window.location.search);
+const catParam = urlParams.get('cat');
+if (catParam && document.getElementById('categoryFilter')) {
+  document.getElementById('categoryFilter').value = catParam;
+  filterListings();
+}

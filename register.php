@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="">
 <head>
+  <link rel="icon" type="image/jpeg" href="images/logo.jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Join HerCraft Hub</title>
@@ -23,10 +24,10 @@
 <div class="auth-card">
   <div class="text-center mb-4">
     <h2>Join HerCraft Hub</h2>
-    <p class="text-muted">Create your free account and start selling today</p>
+    <p class="text-muted">Create your free account. Seller and Buyer accounts are separate so purchases and sales are tracked correctly.</p>
   </div>
 
-  <!-- Success / error messages show here in Phase 3 -->
+  <!-- Success / error messages -->
   <?php if(isset($_SESSION['error'])): ?>
     <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
   <?php endif; ?>
@@ -51,14 +52,14 @@
     <div class="mb-3">
       <label class="form-label">Password</label>
       <div class="input-group">
-        <input type="password" name="password" id="password" 
+        <input type="password" name="password" id="password"
                class="form-control" placeholder="Min 6 characters" required>
-        <button class="btn btn-outline-secondary" type="button" id="togglePass">
-  <i class="ti ti-eye"></i>
-</button>
-      <div class="mt-1">
-        <div id="strength-bar" style="height:4px;border-radius:4px;width:0%;transition:width 0.3s,background 0.3s;"></div>
-        <small id="strength-text" class="text-muted"></small>
+        <button class="btn btn-toggle-pass" type="button" id="togglePass" aria-label="Toggle password visibility">
+          <i class="ti ti-eye"></i>
+        </button>
+      </div>
+      <div class="password-strength">
+        <div id="strength-bar" class="strength-bar"></div>
       </div>
     </div>
 
@@ -69,12 +70,19 @@
       <small id="match-msg" class="text-muted"></small>
     </div>
 
+    <div class="mb-3">
+      <label class="form-label">Location</label>
+      <input type="text" name="location" class="form-control"
+             placeholder="e.g. Cape Town, Western Cape">
+      <small class="text-muted">Helps buyers and sellers find you locally.</small>
+    </div>
+
     <div class="mb-4">
       <label class="form-label">I want to</label>
       <select name="role" class="form-select" required>
-        <option value="">-- Select your role --</option>
-        <option value="buyer">Buy items (Buyer)</option>
-        <option value="seller">Buy &amp; Sell items (Seller)</option>
+        <option value="" disabled selected>Select your role</option>
+        <option value="buyer">Buy items only (Buyer / Customer)</option>
+        <option value="seller">Sell items only (Seller)</option>
       </select>
     </div>
 

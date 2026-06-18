@@ -1,11 +1,23 @@
-<?php 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-session_start(); 
+<?php
+session_start();
+require_once 'config/db.php';
+require_once 'includes/helpers.php';
+
+$categories = get_categories($conn);
+$featured   = db_fetch_all(
+    $conn,
+    'SELECT p.id, p.title, p.price, p.image, c.name AS category_name
+     FROM products p
+     INNER JOIN categories c ON p.category_id = c.id
+     WHERE p.is_active = 1 AND p.is_sold = 0 AND p.quantity > 0
+     ORDER BY p.created_at DESC
+     LIMIT 4'
+);
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="">
 <head>
+  <link rel="icon" type="image/jpeg" href="images/logo.jpg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HerCraft Hub – Home</title>
@@ -17,77 +29,81 @@ session_start();
 
 <?php include 'includes/navbar.php'; ?>
 
-<!-- ── Hero Section ── -->
 <section class="page-header" style="padding:80px 0;">
   <div class="container text-center">
-    <h1 style="font-size:2.8rem;">Where Women Create,<br>Connect &amp; Sell</h1>
+    <h1 style="font-size:2.8rem;">Where Women Create,<br>Connect and Sell</h1>
     <p class="mt-3" style="font-size:1.1rem;opacity:0.85;max-width:560px;margin:0 auto;">
-      South Africa's first C2C marketplace built for women selling handmade goods, tech crafts &amp; digital products.
+      South Africa's first C2C marketplace built for women selling handmade goods, tech crafts and digital products.
     </p>
     <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+      <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'seller'): ?>
       <a href="browse.php" class="btn btn-outline-light px-4 py-2"
-         style="border-radius:4px;letter-spacing:0.08em;font-size:0.85rem;text-transform:uppercase;">
+         style="border-radius:4px;letter-spacing:0.08em;font-size:0.85rem;text-transform:uppercase; color:#fff !important; border-color:#fff !important;">
         Browse Listings
       </a>
-      <a href="register.php" class="btn btn-light px-4 py-2"
+      <?php endif; ?>
+      <?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'buyer'): ?>
+      <a href="<?= isset($_SESSION['user_id']) ? 'sell.php' : 'register.php' ?>" class="btn btn-light px-4 py-2"
          style="border-radius:4px;letter-spacing:0.08em;font-size:0.85rem;
-                text-transform:uppercase;color:var(--purple);font-weight:600;">
-        Start Selling
+                text-transform:uppercase;color:#4a154b !important;font-weight:600;">
+        <?= isset($_SESSION['user_id']) && $_SESSION['role'] === 'seller' ? 'List an Item' : 'Start Selling' ?>
       </a>
+      <?php endif; ?>
     </div>
   </div>
 </section>
 
-<!-- ── Category Pills ── -->
+<?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'seller'): ?>
 <section class="container my-5">
   <h2 class="section-title text-center mb-2">Shop by <span>Category</span></h2>
   <div class="section-divider"></div>
   <div class="d-flex flex-wrap justify-content-center gap-3">
-    <?php
-      $cats = ["Tech Crafts","Handmade","Digital Art","Accessories","Bundles","Beauty Tech"];
-      foreach($cats as $c):
-    ?>
-      <a href="browse.php?cat=<?= urlencode($c) ?>"
-         class="badge-category text-decoration-none">
-        <?= $c ?>
-      </a>
+    <?php foreach ($categories as $cat): ?>
+    <a href="browse.php?cat=<?= urlencode($cat['name']) ?>"
+       class="badge-category text-decoration-none">
+      <?= htmlspecialchars($cat['name']) ?>
+    </a>
     <?php endforeach; ?>
   </div>
 </section>
+<?php endif; ?>
 
-<!-- ── Featured Listings ── -->
+<?php if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'seller'): ?>
 <section class="container mb-5">
   <h2 class="section-title mb-2">Featured <span>Listings</span></h2>
   <div class="section-divider" style="margin:12px 0 24px;"></div>
   <div class="row g-4">
-    <?php for($i=1;$i<=4;$i++): ?>
+    <?php if (count($featured) === 0): ?>
+    <div class="col-12 text-center py-4">
+      <p class="text-muted">No listings yet. Be the first to sell on HerCraft Hub.</p>
+      <a href="sell.php" class="btn btn-outline-primary">List an Item</a>
+    </div>
+    <?php else: ?>
+    <?php foreach ($featured as $item): ?>
     <div class="col-sm-6 col-lg-3">
-      <div class="card h-100">
-        <img src="https://via.placeholder.com/400x200/2D1C42/F5F0E8?text=Product+<?=$i?>"
-             class="card-img-top" alt="Product <?= $i ?>">
+      <div class="card listing-card h-100">
+        <img src="<?= htmlspecialchars(product_image_src($item['image'])) ?>"
+             class="card-img-top" alt="<?= htmlspecialchars($item['title']) ?>">
         <div class="card-body">
-          <span class="badge-category">Tech Crafts</span>
-          <h6 class="mt-2 fw-bold" style="font-family:var(--font-head);font-size:1.05rem;">
-            Sample Product <?= $i ?>
-          </h6>
-          <p class="small mt-1" style="color:var(--text-muted);">Handcrafted in South Africa</p>
+          <span class="badge-category"><?= htmlspecialchars($item['category_name']) ?></span>
+          <h6 class="mt-2 listing-title"><?= htmlspecialchars($item['title']) ?></h6>
+          <p class="small mt-1 text-muted">Handcrafted in South Africa</p>
           <div class="d-flex justify-content-between align-items-center mt-3">
-            <span style="color:var(--purple);font-weight:700;font-family:var(--font-head);font-size:1.1rem;">
-              R<?= $i*50 ?>.00
-            </span>
-            <a href="listing.php?id=<?=$i?>" class="btn btn-primary btn-sm">View</a>
+            <span class="listing-price"><?= format_price($item['price']) ?></span>
+            <a href="listing.php?id=<?= (int) $item['id'] ?>" class="btn btn-primary btn-sm">View</a>
           </div>
         </div>
       </div>
     </div>
-    <?php endfor; ?>
+    <?php endforeach; ?>
+    <?php endif; ?>
   </div>
   <div class="text-center mt-4">
     <a href="browse.php" class="btn btn-outline-primary">View All Listings</a>
   </div>
 </section>
+<?php endif; ?>
 
-<!-- ── Why HerCraft ── -->
 <section style="background:var(--cream-dark);padding:60px 0;">
   <div class="container">
     <h2 class="section-title text-center mb-2">Why <span>HerCraft Hub?</span></h2>
@@ -95,12 +111,12 @@ session_start();
     <div class="row g-4 text-center">
       <?php
         $features = [
-          ["icon"=>"shield",        "title"=>"Verified Sellers", "desc"=>"Every seller is verified for your safety and peace of mind."],
-          ["icon"=>"lock",          "title"=>"Secure Payments",  "desc"=>"South African payment gateways — pay safely, every time."],
-          ["icon"=>"device-mobile", "title"=>"Mobile Friendly",  "desc"=>"Built for South Africa — works great on any phone."],
-          ["icon"=>"rocket",        "title"=>"Easy to Sell",     "desc"=>"List your item in under 2 minutes. No experience needed."],
+          ['icon' => 'shield',        'title' => 'Verified Sellers', 'desc' => 'Every seller is verified for your safety and peace of mind.'],
+          ['icon' => 'lock',          'title' => 'Secure Payments',  'desc' => 'South African payment gateways. Pay safely, every time.'],
+          ['icon' => 'device-mobile', 'title' => 'Mobile Friendly',  'desc' => 'Built for South Africa. Works great on any phone.'],
+          ['icon' => 'rocket',        'title' => 'Easy to Sell',     'desc' => 'List your item in under 2 minutes. No experience needed.'],
         ];
-        foreach($features as $f):
+        foreach ($features as $f):
       ?>
       <div class="col-sm-6 col-lg-3">
         <div class="card feature-card p-4 h-100 text-center">
@@ -113,41 +129,6 @@ session_start();
       </div>
       <?php endforeach; ?>
     </div>
-  </div>
-</section>
-
-<!-- ── Women in Tech Spotlight ── -->
-<section class="container my-5">
-  <h2 class="section-title text-center mb-2">Women in <span>Tech Spotlight</span></h2>
-  <div class="section-divider"></div>
-  <div class="row g-4 justify-content-center">
-    <?php
-      $spotlights = [
-        ["N", "Naledi M.",    "Johannesburg", "Custom PCB jewellery and wearable tech accessories."],
-        ["A", "Ayasha K.",    "Cape Town",    "Digital planners and Notion templates for creatives."],
-        ["T", "Thandi B.",    "Pretoria",     "Handmade macrame and tech cable organisers."],
-      ];
-      foreach($spotlights as $s):
-    ?>
-    <div class="col-sm-6 col-lg-4">
-      <div class="card p-4 text-center h-100">
-        <div class="user-avatar mx-auto mb-3"
-             style="width:56px;height:56px;font-size:1.4rem;border-width:2px;">
-          <?= $s[0] ?>
-        </div>
-        <h6 class="fw-bold" style="font-family:var(--font-head);font-size:1.1rem;">
-          <?= $s[1] ?>
-        </h6>
-        <small style="color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;font-size:0.7rem;">
-          <?= $s[2] ?>
-        </small>
-        <p class="mt-2 small" style="color:var(--text-muted);"><?= $s[3] ?></p>
-        <a href="browse.php" class="btn btn-outline-primary btn-sm mt-auto">
-          View Listings
-        </a>
-      </div>
-    </div>
-    <?php endforeach; ?>
   </div>
 </section>
 

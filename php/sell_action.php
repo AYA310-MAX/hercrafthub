@@ -1,94 +1,85 @@
 <?php
 session_start();
-require '../config/db.php';
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/auth.php';
 
-// ── Must be logged in ──
-if (!isset($_SESSION['user_id'])) {
-  $_SESSION['error'] = "Please log in to post a listing.";
-  header('Location: ../login.php');
-  exit;
-}
-
-// ── Must be a seller ──
-if ($_SESSION['role'] === 'buyer') {
-  $_SESSION['error'] = "Please upgrade to a Seller account to list items.";
-  header('Location: ../sell.php');
-  exit;
-}
+require_seller();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  header('Location: ../sell.php');
-  exit;
+    header('Location: ../sell.php');
+    exit;
 }
 
-// ── Collect inputs ──
-$seller_id   = $_SESSION['user_id'];
-$title       = trim($_POST['title']);
-$description = trim($_POST['description']);
-$price       = floatval($_POST['price']);
-$condition   = $_POST['condition'];
-$location    = trim($_POST['location']);
-$category    = trim($_POST['category']);
+$seller_id   = (int) $_SESSION['user_id'];
+$title       = trim($_POST['title'] ?? '');
+$description = trim($_POST['description'] ?? '');
+$price       = (float) ($_POST['price'] ?? 0);
+$condition   = trim($_POST['condition'] ?? '');
+$location    = trim($_POST['location'] ?? '');
+$category    = trim($_POST['category'] ?? '');
+$quantity    = (int) ($_POST['quantity'] ?? 1);
 
-// ── Validation ──
-if (empty($title) || empty($description) || $price <= 0) {
-  $_SESSION['error'] = "Please fill in all required fields.";
-  header('Location: ../sell.php');
-  exit;
+if ($title === '' || $description === '' || $price <= 0 || $condition === '' || $category === '' || $quantity < 1) {
+    $_SESSION['error'] = 'Please fill in all required fields.';
+    header('Location: ../sell.php');
+    exit;
 }
 
-// ── Get category id ──
-$cat_stmt = $conn->prepare("SELECT id FROM categories WHERE name = ?");
-$cat_stmt->bind_param("s", $category);
-$cat_stmt->execute();
-$cat_stmt->bind_result($category_id);
-$cat_stmt->fetch();
-$cat_stmt->close();
+$allowed_conditions = ['New', 'Like New', 'Good', 'Fair'];
+if (!in_array($condition, $allowed_conditions, true)) {
+    $_SESSION['error'] = 'Please select a valid condition.';
+    header('Location: ../sell.php');
+    exit;
+}
 
-// ── Handle image upload ──
-$image_name = null;
+$category_row = db_fetch_one($conn, 'SELECT id FROM categories WHERE name = ? LIMIT 1', 's', [$category]);
+if ($category_row === null) {
+    $_SESSION['error'] = 'Please select a valid category.';
+    header('Location: ../sell.php');
+    exit;
+}
+
+$category_id = (int) $category_row['id'];
+$image_name  = null;
+
+$user_row = db_fetch_one($conn, 'SELECT location FROM users WHERE id = ? LIMIT 1', 'i', [$seller_id]);
+if ($user_row !== null && trim((string) ($user_row['location'] ?? '')) === '') {
+    $_SESSION['error'] = 'Please complete your profile with a location before listing items.';
+    header('Location: ../profile.php');
+    exit;
+}
+
+if ($location !== '') {
+    db_execute($conn, 'UPDATE users SET location = ? WHERE id = ?', 'si', [$location, $seller_id]);
+}
 
 if (!empty($_FILES['image']['name'])) {
-  $allowed   = ['jpg','jpeg','png','gif'];
-  $ext       = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-  $max_size  = 2 * 1024 * 1024; // 2MB
-
-  if (!in_array($ext, $allowed)) {
-    $_SESSION['error'] = "Only JPG, PNG or GIF images are allowed.";
-    header('Location: ../sell.php');
-    exit;
-  }
-
-  if ($_FILES['image']['size'] > $max_size) {
-    $_SESSION['error'] = "Image must be under 2MB.";
-    header('Location: ../sell.php');
-    exit;
-  }
-
-  $image_name = uniqid('product_') . '.' . $ext;
-  move_uploaded_file($_FILES['image']['tmp_name'], '../uploads/' . $image_name);
+    $image_name = save_product_image($_FILES['image']);
+    if ($image_name === null) {
+        $_SESSION['error'] = 'Image upload failed. Use JPG, PNG, or GIF under 2MB.';
+        header('Location: ../sell.php');
+        exit;
+    }
 }
 
-// ── Insert product ──
-$stmt = $conn->prepare(
-  "INSERT INTO products 
-   (seller_id, category_id, title, description, price, image, condition_type, location) 
-   VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-);
-$stmt->bind_param(
-  "iissdsss",
-  $seller_id, $category_id, $title, $description,
-  $price, $image_name, $condition, $location
+$inserted = db_execute(
+    $conn,
+    'INSERT INTO products (seller_id, category_id, title, description, price, image, condition_type, location, quantity)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'iissdsssi',
+    [$seller_id, $category_id, $title, $description, $price, $image_name, $condition, $location, $quantity]
 );
 
-if ($stmt->execute()) {
-  $_SESSION['success'] = "Your listing has been posted successfully! ✦";
-  header('Location: ../browse.php');
+if ($inserted) {
+    $_SESSION['success'] = 'Your listing has been posted successfully.';
+    header('Location: ../dashboard.php');
 } else {
-  $_SESSION['error'] = "Something went wrong. Please try again.";
-  header('Location: ../sell.php');
+    if ($image_name !== null) {
+        delete_product_image($image_name);
+    }
+    $_SESSION['error'] = 'Something went wrong. Please try again.';
+    header('Location: ../sell.php');
 }
 
-$stmt->close();
-$conn->close();
-?>
+exit;
